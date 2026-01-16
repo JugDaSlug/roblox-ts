@@ -87,12 +87,22 @@ function TS.import(context, module, ...)
 
 	if not registeredLibraries[module] then
 		if _G[module] then
-			error(
-				OUTPUT_PREFIX
-				.. "Invalid module access! Do you have multiple TS runtimes trying to import this? "
-				.. module:GetFullName(),
-				2
-			)
+			local jest = false
+			for module, v in currentlyLoading do
+				if string.find(module.Name, ".spec")
+					jest = true
+					break
+				end
+			end
+
+			if not jest then
+				error(
+					OUTPUT_PREFIX
+					.. "Invalid module access! Do you have multiple TS runtimes trying to import this? "
+					.. module:GetFullName(),
+					2
+				)
+			end
 		end
 
 		_G[module] = TS
